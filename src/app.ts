@@ -2,6 +2,7 @@ import express from "express";
 import config from "config";
 import log from "./logger";
 import connect from "./db/connect";
+import routes from "./routes";
 
 const port = config.get("port") as number;
 
@@ -16,4 +17,5 @@ app.use(express.urlencoded({ extended: false }));
 app.listen(port, () => {
   log.info(`Server running on http://localhost:${port}`);
   connect();
+  routes(app);
 });
