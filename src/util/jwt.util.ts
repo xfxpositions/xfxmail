@@ -12,9 +12,10 @@ const createToken = (data: object) => {
   return sign({ data }, jwtSecret, options);
 };
 
-const verifyToken = (token: string) => {
+const checkToken = (token: string) => {
   try {
-    return verify(token, jwtSecret);
+    verify(token, jwtSecret);
+    return true;
   } catch (error) {
     log.error(`Some error in validating jwt => ${error}`);
     return false;
@@ -25,4 +26,4 @@ const parseToken = (token: string) => {
   return JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
 };
 
-export { createToken, verifyToken, parseToken };
+export { createToken, checkToken, parseToken };
