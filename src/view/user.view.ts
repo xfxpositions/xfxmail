@@ -11,7 +11,7 @@ const router: Router = Router();
 const basePath = "/user";
 
 router.post(`${basePath}/register`, create_post);
-router.post(`${basePath}/delete`, delete_delete);
+router.delete(`${basePath}/delete/:id`, delete_delete);
 router.post(`${basePath}/update`, update_post);
 router.get(`${basePath}/:id`, fetch_get);
 

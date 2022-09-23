@@ -9,5 +9,4 @@ const log = pino({
     },
   },
 });
-
 export default log;
