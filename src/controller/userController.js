@@ -4,7 +4,7 @@ import log from "../logger";
 import { error } from "../debug-logger";
 import { Error } from "mongoose";
 
-const create_post = (req: Request, res: Response) => {
+const create_post = (req, res) => {
   const { name, password, forgotMail, phoneNumber } = req.body;
   const user = new User({
     name: name,
@@ -12,7 +12,7 @@ const create_post = (req: Request, res: Response) => {
     forgotMail: forgotMail,
     phoneNumber: phoneNumber,
   });
-  User.find({ name: name }, (result: any) => {
+  User.find({ name: name }, (result) => {
     console.log(result);
   });
   user.save((err, result) => {
@@ -25,10 +25,10 @@ const create_post = (req: Request, res: Response) => {
   });
 };
 
-const delete_delete = (req: Request, res: Response) => {
+const delete_delete = (req, res) => {
   console.log("delete");
   const { id } = req.params;
-  User.findByIdAndDelete(id, (err: Error, result: any) => {
+  User.findByIdAndDelete(id, (err, result) => {
     if (err) {
       return res.status(400).json({ err: err.message });
     } else {
@@ -37,8 +37,8 @@ const delete_delete = (req: Request, res: Response) => {
   });
 };
 
-const update_post = (req: Request, res: Response) => {};
+const update_post = (req, res) => {};
 
-const fetch_get = (req: Request, res: Response) => {};
+const fetch_get = (req, res) => {};
 
 export { create_post, delete_delete, update_post, fetch_get };

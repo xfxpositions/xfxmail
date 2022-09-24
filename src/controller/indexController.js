@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-const index_get = (req: Request, res: Response) => {
+const index_get = (req, res) => {
   res.json({ message: "Hello world!" });
 };
 

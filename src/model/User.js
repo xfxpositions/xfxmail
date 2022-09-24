@@ -1,13 +1,6 @@
-import mongoose, { Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
-interface IUser {
-  name: string;
-  password: string;
-  forgotMail: string;
-  phoneNumber: number;
-}
-
-const userSchema = new Schema<IUser>(
+const userSchema = new Schema(
   {
     name: {
       type: String,

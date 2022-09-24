@@ -4,9 +4,9 @@ import {
   delete_delete,
   fetch_get,
   update_post,
-} from "../controller/user.controller";
+} from "../controller/userController";
 
-const router: Router = Router();
+const router = Router();
 
 const basePath = "/user";
 
