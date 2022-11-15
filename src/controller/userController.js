@@ -1,10 +1,9 @@
-import { Request, Response } from "express";
-import User from "../model/User";
-import log from "../logger";
-import { error } from "../debug-logger";
-import { Error } from "mongoose";
+import User from "../model/User.js";
+import logger from "../util/logger.js";
+import jwtUtil from "../util/jwtUtil.js"
 
 const create_post = (req, res) => {
+  console.log(req.body)
   const { name, password, forgotMail, phoneNumber } = req.body;
   const user = new User({
     name: name,
@@ -17,7 +16,7 @@ const create_post = (req, res) => {
   });
   user.save((err, result) => {
     if (err) {
-      error(`error while creating new user => ${err.message}`);
+      logger.error(`error while creating new user => ${err.message}`);
       return res.status(400).json({ err: err.message });
     } else {
       return res.status(200).json({ result: result });
@@ -41,4 +40,41 @@ const update_post = (req, res) => {};
 
 const fetch_get = (req, res) => {};
 
-export { create_post, delete_delete, update_post, fetch_get };
+const recoverPassword_get = (req,res) => {
+  const {token} = req.params;
+  const {newPassword} = req.body; 
+  const {username} = jwtUtil.parseToken(token);
+  User.find({name:username},(err,result)=>{
+    if (err) {
+      return res.status(403).json({ err: err.message });
+    }else{
+      User.findByIdAndUpdate(result._id,{password:newPassword});
+    }
+  })
+  jwtUtil.checkToken(token,token)
+
+const recoverPassword_post = (req,res) => {
+  console.log(req.body)
+  
+  if(req.body?.username == undefined){
+		res.sendStatus(401);
+  }
+	else{
+    	User.find({username:req.body.username},(err,result)=>{
+        if (err) {
+          return res.status(403).json({ err: err.message });
+        }else{
+          const payload = {
+            username:result.username,
+            id:result._id
+          }
+          const token = jwtUtil.createToken(payload,result.password,{expiresIn:"15m"})
+          const link = `http://localhost/recovery/${token}`;
+          console.log(link);
+          res.status(200).json({link:link});
+        }
+      })
+  }
+}
+
+export { create_post, delete_delete, update_post, fetch_get,recoverPassword_get,recoverPassword_post };

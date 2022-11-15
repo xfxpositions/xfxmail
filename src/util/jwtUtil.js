@@ -1,20 +1,21 @@
-import { sign, verify, Secret, SignOptions } from "jsonwebtoken";
-import config from "config";
-import log from "../logger";
+import a from "jsonwebtoken";
+const { sign, verify } = a;
+import config from "../config/development.js";
+import log from "../util/logger.js";
 
-const jwtSecret: Secret = config.get("jwt_secret");
-const options: SignOptions = {
+const jwtSecret = config.jwt_secret;
+const defaultOptions = {
   expiresIn: "1h",
   issuer: "Xfxmail System",
 };
 
-const createToken = (data: object) => {
-  return sign({ data }, jwtSecret, options);
+const createToken = (data,secret=jwtSecret,options=defaultOptions,) => {
+  return sign({ data }, secret, options);
 };
 
-const checkToken = (token: string) => {
+const checkToken = (token,secret=jwtSecret) => {
   try {
-    verify(token, jwtSecret);
+    verify(token, jwtSecret+secret);
     return true;
   } catch (error) {
     log.error(`Some error in validating jwt => ${error}`);
@@ -22,8 +23,8 @@ const checkToken = (token: string) => {
   }
 };
 
-const parseToken = (token: string) => {
+const parseToken = (token) => {
   return JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
 };
 
-export { createToken, checkToken, parseToken };
+export default { createToken, checkToken, parseToken };

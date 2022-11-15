@@ -1,6 +1,6 @@
-import userView from "./view/user.view";
-import authView from "./view/auth.view";
-import authMiddleware from "./middleware/auth.middleware";
+import userView from "./view/userView.js";
+import authView from "./view/authView.js";
+import authMiddleware from "./middleware/authMiddleware.js";
 
 export default (app) => {
   app.use(authMiddleware);

@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import config from "config";
-import log from "../logger";
-const connect = () => {
-  const dbUrl = config.get("dbUrl");
+import config from "../config/development.js";
+import log from "../util/logger.js";
+const connect = async() => {
+  const dbUrl = config.dbUrl_local;
   return mongoose
     .connect(dbUrl)
     .then(() => {
