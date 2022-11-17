@@ -1,9 +1,9 @@
 import User from "../model/User.js";
 import logger from "../util/logger.js";
-import jwtUtil from "../util/jwtUtil.js"
+import jwtUtil from "../util/jwtUtil.js";
 
 const create_post = (req, res) => {
-  console.log(req.body)
+  console.log(req.body);
   const { name, password, forgotMail, phoneNumber } = req.body;
   const user = new User({
     name: name,
@@ -38,43 +38,68 @@ const delete_delete = (req, res) => {
 
 const update_post = (req, res) => {};
 
-const fetch_get = (req, res) => {};
-
-const recoverPassword_get = (req,res) => {
-  const {token} = req.params;
-  const {newPassword} = req.body; 
-  const {username} = jwtUtil.parseToken(token);
-  User.find({name:username},(err,result)=>{
+const fetch_get = (req, res) => {
+  const { id } = req.params;
+  User.findById(id, (err, result) => {
     if (err) {
-      return res.status(403).json({ err: err.message });
-    }else{
-      User.findByIdAndUpdate(result._id,{password:newPassword});
+      res.status(403).json({ err: err.message });
+    } else {
+      res.status(200).json({ result: result });
     }
-  })
-  jwtUtil.checkToken(token,token)
+  });
+};
 
-const recoverPassword_post = (req,res) => {
-  console.log(req.body)
-  
-  if(req.body?.username == undefined){
-		res.sendStatus(401);
-  }
-	else{
-    	User.find({username:req.body.username},(err,result)=>{
+const recoverPassword_get = (req, res) => {
+  const { token } = req.params;
+  const { newPassword } = req.body;
+  const { username } = jwtUtil.parseToken(token);
+  const check = jwtUtil.checkToken(token, result.password);
+  if (check) {
+    User.findOneAndUpdate(
+      { name: username },
+      { password: newPassword },
+      (err, result) => {
         if (err) {
-          return res.status(403).json({ err: err.message });
-        }else{
-          const payload = {
-            username:result.username,
-            id:result._id
-          }
-          const token = jwtUtil.createToken(payload,result.password,{expiresIn:"15m"})
-          const link = `http://localhost/recovery/${token}`;
-          console.log(link);
-          res.status(200).json({link:link});
+          res.status(403).json({ err: err.message });
+        } else {
+          res.status(200).json({ message: "password updated successfully" });
         }
-      })
+      }
+    );
+  } else {
+    res.status(403).json({ err: "Invalid token" });
   }
-}
+};
+const recoverPassword_post = (req, res) => {
+  console.log(req.body);
 
-export { create_post, delete_delete, update_post, fetch_get,recoverPassword_get,recoverPassword_post };
+  if (req.body?.username == undefined) {
+    res.sendStatus(401);
+  } else {
+    User.find({ username: req.body.username }, (err, result) => {
+      if (err) {
+        return res.status(403).json({ err: err.message });
+      } else {
+        const payload = {
+          username: result.username,
+          id: result._id,
+        };
+        const token = jwtUtil.createToken(payload, result.password, {
+          expiresIn: "15m",
+        });
+        const link = `http://localhost/recovery/${token}`;
+        console.log(link);
+        res.status(200).json({ link: link });
+      }
+    });
+  }
+};
+
+export {
+  create_post,
+  delete_delete,
+  update_post,
+  fetch_get,
+  recoverPassword_get,
+  recoverPassword_post,
+};
