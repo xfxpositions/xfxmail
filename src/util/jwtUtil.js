@@ -9,13 +9,17 @@ const defaultOptions = {
   issuer: "Xfxmail System",
 };
 
-const createToken = (data,secret=jwtSecret,options=defaultOptions,) => {
+const createToken = (data, secret = jwtSecret, options = defaultOptions) => {
   return sign({ data }, secret, options);
 };
 
-const checkToken = (token,secret=jwtSecret) => {
+const checkToken = (token, secret) => {
+  if (secret == undefined) {
+    secret = jwtSecret;
+  }
+  console.log("SECRET => " + secret);
   try {
-    verify(token, jwtSecret+secret);
+    verify(token, jwtSecret + secret);
     return true;
   } catch (error) {
     log.error(`Some error in validating jwt => ${error}`);

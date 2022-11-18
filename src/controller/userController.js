@@ -52,36 +52,41 @@ const fetch_get = (req, res) => {
 const recoverPassword_get = (req, res) => {
   const { token } = req.params;
   const { newPassword } = req.body;
-  const { username } = jwtUtil.parseToken(token);
-  const check = jwtUtil.checkToken(token, result.password);
-  if (check) {
-    User.findOneAndUpdate(
-      { name: username },
-      { password: newPassword },
-      (err, result) => {
-        if (err) {
-          res.status(403).json({ err: err.message });
-        } else {
-          res.status(200).json({ message: "password updated successfully" });
+  const { name } = jwtUtil.parseToken(token);
+  console.log(jwtUtil.parseToken(token));
+
+  User.find({ name: name }, (err, result) => {
+    console.log(result);
+    const check = jwtUtil.checkToken(token, result.password);
+    if (check) {
+      User.findOneAndUpdate(
+        { name: name },
+        { password: newPassword },
+        (err, result) => {
+          if (err) {
+            res.status(403).json({ err: err.message });
+          } else {
+            res.status(200).json({ message: "password updated successfully" });
+          }
         }
-      }
-    );
-  } else {
-    res.status(403).json({ err: "Invalid token" });
-  }
+      );
+    } else {
+      res.status(403).json({ err: "Invalid token" });
+    }
+  });
 };
 const recoverPassword_post = (req, res) => {
   console.log(req.body);
 
-  if (req.body?.username == undefined) {
+  if (req.body?.name == undefined) {
     res.sendStatus(401);
   } else {
-    User.find({ username: req.body.username }, (err, result) => {
+    User.find({ name: req.body.name }, (err, result) => {
       if (err) {
         return res.status(403).json({ err: err.message });
       } else {
         const payload = {
-          username: result.username,
+          name: result.name,
           id: result._id,
         };
         const token = jwtUtil.createToken(payload, result.password, {
