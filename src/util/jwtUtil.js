@@ -1,16 +1,15 @@
-import a from "jsonwebtoken";
-const { sign, verify } = a;
-import config from "../config/development.js";
-import log from "../util/logger.js";
+import jwt from "jsonwebtoken";
 
 const jwtSecret = config.jwt_secret;
 const defaultOptions = {
-  expiresIn: "1h",
   issuer: "Xfxmail System",
 };
 
-const createToken = (data, secret = jwtSecret, options = defaultOptions) => {
-  return sign({ data }, secret, options);
+const createToken = (data, secret, options) => {
+  !options && (options = defaultOptions);
+  !secret && (options = defaultOptions);
+  console.log(options);
+  return jwt.sign(data, secret, options);
 };
 
 const checkToken = (token, secret) => {

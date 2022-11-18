@@ -1,20 +1,24 @@
 {
-  "name": "xfxmail-js",
-  "version": "0.3.0",
-  "main": "app.js",
-  "author": "yusuf karaca",
+  "name": "xfxmail",
+  "version": "0.5.0",
+  "description": "an open source customizable mail server ",
+  "main": "src/index.js",
+  "repository": "https://github.com/xfxpositions/xfxmail",
+  "author": "yusuf karaca - xfxposition",
   "license": "MIT",
-  "type": "module",
+  "private": false,
   "dependencies": {
+    "@fastify/mongodb": "^6.1.0",
     "crypto-js": "^4.1.1",
-    "cryptojs": "^2.5.3",
-    "express": "^4.18.1",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.6.1",
-    "pino": "^8.6.0",
-    "pino-pretty": "^9.1.0"
+    "dotenv": "^16.0.3",
+    "fastify": "^4.10.0",
+    "mongoose": "^6.7.2"
   },
   "scripts": {
-    "dev": "npx nodemon --experimental-modules src/app.js"
-  }
+    "dev": "npx nodemon NODE_ENV=development src/index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "type": "module"
 }

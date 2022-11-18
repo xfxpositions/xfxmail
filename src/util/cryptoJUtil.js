@@ -1,8 +1,8 @@
-import { SHA256, enc } from "crypto-js";
-import config from "../config/development.js";
+import cryptojs from "crypto-js";
 
-const saltKey = config.saltKey;
+const saltKey = process.env.PASSWORD_SALT;
 
-const encrypt = (data) => SHA256(data + saltKey).toString(enc.Hex);
+const encrypt = (data) =>
+  cryptojs.SHA256(data + saltKey).toString(cryptojs.enc.Hex);
 
 export { encrypt };
