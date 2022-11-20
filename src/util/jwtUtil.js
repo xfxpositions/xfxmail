@@ -1,33 +1,33 @@
 import jwt from "jsonwebtoken";
 
-const jwtSecret = config.jwt_secret;
+const jwtSecret = process.env.JWT_SECRET;
 const defaultOptions = {
   issuer: "Xfxmail System",
 };
 
 const createToken = (data, secret, options) => {
   !options && (options = defaultOptions);
-  !secret && (options = defaultOptions);
-  console.log(options);
+  !secret && (secret = jwtSecret);
   return jwt.sign(data, secret, options);
 };
 
 const checkToken = (token, secret) => {
-  if (secret == undefined) {
-    secret = jwtSecret;
-  }
-  console.log("SECRET => " + secret);
+  //console.log("SECRET => " + secret);
   try {
-    verify(token, jwtSecret + secret);
+    jwt.verify(token, secret);
     return true;
   } catch (error) {
-    log.error(`Some error in validating jwt => ${error}`);
+    console.log(`Some error in validating jwt => ${error}`);
     return false;
   }
 };
 
 const parseToken = (token) => {
-  return JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
+  try {
+    return JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
+  } catch (err) {
+    return err.message;
+  }
 };
 
 export default { createToken, checkToken, parseToken };

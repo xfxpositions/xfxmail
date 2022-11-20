@@ -1,22 +1,18 @@
 import Fastify from "fastify";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import User from "./models/User.js";
 
 dotenv.config();
 
 const fastify = Fastify({
   logger: true,
 });
+
+import jwtPrehandler from "./plugins/jwtPrehandler.js";
+fastify.addHook("preHandler", jwtPrehandler); //jwt authentication
+
 import userRoutes from "./routes/user.js";
-
-fastify.register(userRoutes);
-
-fastify.get("/users", (req, reply) => {
-  User.find({}, (err, result) => {
-    reply.send(result);
-  });
-});
+fastify.register(userRoutes); // use user routes (just like app.use)
 
 const connect = async () => {
   const dbUrl = process.env.DBURI_LOCAL;
