@@ -18,7 +18,10 @@ const checkToken = (token, secret) => {
     return true;
   } catch (error) {
     console.log(`Some error in validating jwt => ${error}`);
-    return false;
+    return {
+      status: false,
+      message: error.message,
+    };
   }
 };
 

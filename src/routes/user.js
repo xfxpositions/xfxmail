@@ -22,7 +22,7 @@ function userRoutes(fastify, options, done) {
         console.log(result);
         err && res.status(404).send({ err: err });
         if (result == null) {
-          reply.status(404).send({ err: "not found" });
+          reply.status(404).send({ err: "user not found" });
         } else {
           const user = { username: username };
           const token = jwt.sign(user, process.env.JWT_SECRET + password, {
@@ -38,12 +38,19 @@ function userRoutes(fastify, options, done) {
     req.body.password = hash_password(req.body.password);
     User.create(req.body, (err, result) => {
       if (err) {
+        if (err.code == 11000) {
+          reply
+            .status(409)
+            .send({ err: "conflict error", message: err.message });
+          return;
+        }
         reply.status(500).send({ err: err.message });
+      } else {
+        reply.send({
+          message: "user created",
+          userdata: result,
+        });
       }
-      reply.send({
-        message: "user created",
-        userdata: result,
-      });
     });
   });
 
@@ -52,7 +59,7 @@ function userRoutes(fastify, options, done) {
     User.findById(id, (err, result) => {
       console.log(result);
       if (result == null) {
-        reply.status(404).send({ err: "not found" });
+        reply.status(404).send({ err: "user not found" });
       } else if (err) {
         reply.status(500).send({ err: err.message });
       }
